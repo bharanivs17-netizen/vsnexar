@@ -11,6 +11,7 @@ const Footer = () => {
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
       className="glass"
+      id="contact"
       style={{
         borderTop: '1px solid rgba(124, 58, 237, 0.3)',
         padding: '50px 20px 30px',

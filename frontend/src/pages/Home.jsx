@@ -1,29 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import ServiceCards from '../components/ServiceCards';
 import CEOSpotlight from '../components/CEOSpotlight';
 import Footer from '../components/Footer';
 import CEOStickyButton from '../components/CEOStickyButton';
-import { FaLaptopCode, FaVideo, FaCameraRetro, FaPaintBrush, FaPenNib, FaMagic } from 'react-icons/fa';
-
-const ICON_MAP = {
-  'web-design': <FaLaptopCode size={40} color="#3b82f6" />,
-  'logo-design': <FaPaintBrush size={40} color="#ec4899" />,
-  'video-editing': <FaVideo size={40} color="#10b981" />,
-  'photo-editing': <FaCameraRetro size={40} color="#eab308" />,
-  'ui-ux-design': <FaMagic size={40} color="#8b5cf6" />,
-  'content-creation': <FaPenNib size={40} color="#f97316" />
-};
-
-const SERVICES = [
-  { id: 'web-design', title: 'Web Design' },
-  { id: 'logo-design', title: 'Logo Design' },
-  { id: 'photo-editing', title: 'Photo Editing' },
-  { id: 'video-editing', title: 'Video Editing' },
-  { id: 'ui-ux-design', title: 'UI/UX Design' },
-  { id: 'content-creation', title: 'Content Creation' }
-];
 
 const TOTAL_STATS = {
   projects: 1200,
@@ -32,28 +13,14 @@ const TOTAL_STATS = {
 };
 
 const Home = () => {
-  const [showAutoModal, setShowAutoModal] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAutoModal(true);
-    }, 2000); // 2 seconds
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleViewDetails = () => {
-    setShowAutoModal(false);
-    // Scroll to ServiceCards
-    const serviceSection = document.querySelector('.service-cards');
-    if (serviceSection) {
-      serviceSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div style={{ position: 'relative' }}>
       <HeroSection />
       
+      <div className="service-cards">
+        <ServiceCards />
+      </div>
+
       {/* Stats Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -119,93 +86,107 @@ const Home = () => {
         ))}
       </motion.div>
       
-      <div className="service-cards">
-        <ServiceCards />
-      </div>
       <CEOSpotlight />
+      
+      {/* Call to Action Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        style={{
+          padding: '80px 20px',
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, rgba(7,7,20,0.9), rgba(20,20,45,0.8))',
+          margin: '40px 0'
+        }}
+      >
+        <motion.h2
+          initial={{ scale: 0.8 }}
+          whileInView={{ scale: 1 }}
+          transition={{ delay: 0.2, type: 'spring' }}
+          style={{
+            fontSize: '2.5rem',
+            marginBottom: '20px',
+            background: 'linear-gradient(90deg, #06b6d4, #a78bfa, #ec4899)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent'
+          }}
+        >
+          Ready to Bring Your Vision to Life?
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          style={{
+            fontSize: '1.2rem',
+            color: '#94a3b8',
+            marginBottom: '40px',
+            maxWidth: '600px',
+            margin: '0 auto 40px'
+          }}
+        >
+          Let's collaborate and create something amazing together. Contact us today to discuss your project.
+        </motion.p>
+        <motion.div
+          initial={{ scale: 0 }}
+          whileInView={{ scale: 1 }}
+          transition={{ delay: 0.6, type: 'spring' }}
+          style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4)' }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              padding: '15px 30px',
+              background: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
+              border: 'none',
+              borderRadius: '10px',
+              color: 'white',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              display: 'inline-block'
+            }}
+            onClick={() => {
+              const contactSection = document.querySelector('#contact');
+              if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
+            Get Started
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              padding: '15px 30px',
+              background: 'transparent',
+              border: '2px solid #a78bfa',
+              borderRadius: '10px',
+              color: '#a78bfa',
+              fontSize: '1.1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              const serviceSection = document.querySelector('.service-cards');
+              if (serviceSection) {
+                serviceSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          >
+            View Services
+          </motion.button>
+        </motion.div>
+      </motion.div>
+      
       <Footer />
       <CEOStickyButton />
-
-      {/* Auto Modal */}
-      {showAutoModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}
-          onClick={() => setShowAutoModal(false)}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '20px',
-              padding: '40px',
-              maxWidth: '600px',
-              width: '90%',
-              textAlign: 'center',
-              border: '1px solid rgba(255,255,255,0.2)'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ fontSize: '2rem', marginBottom: '20px', color: 'white' }}>Our Services</h2>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap', marginBottom: '30px' }}>
-              {SERVICES.map((service) => (
-                <motion.div
-                  key={service.id}
-                  whileHover={{ scale: 1.1 }}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    padding: '10px',
-                    borderRadius: '10px',
-                    background: 'rgba(255,255,255,0.1)',
-                    minWidth: '80px'
-                  }}
-                >
-                  {ICON_MAP[service.id]}
-                  <p style={{ fontSize: '0.8rem', marginTop: '5px', color: 'white' }}>{service.title}</p>
-                </motion.div>
-              ))}
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleViewDetails}
-              style={{
-                padding: '15px 30px',
-                background: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
-                border: 'none',
-                borderRadius: '10px',
-                color: 'white',
-                fontSize: '1.2rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                boxShadow: '0 5px 15px rgba(59, 130, 246, 0.4)'
-              }}
-            >
-              View Our Achievements
-            </motion.button>
-          </motion.div>
-        </motion.div>
-      )}
     </div>
   );
 };
