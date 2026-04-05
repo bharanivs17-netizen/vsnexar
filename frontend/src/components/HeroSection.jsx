@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaSearch } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { FaSearch, FaArrowDown } from 'react-icons/fa';
 
 const HeroSection = () => {
   const publicUrl = import.meta.env.BASE_URL || '/';
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 300], [0, -100]);
+  const opacity = useTransform(scrollY, [0, 300], [1, 0.8]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -16,131 +30,376 @@ const HeroSection = () => {
     setSearchQuery('');
   };
 
+  const scrollToServices = () => {
+    const serviceSection = document.querySelector('.service-cards');
+    if (serviceSection) {
+      serviceSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '90vh',
-      padding: '80px 20px 20px',
-      textAlign: 'center',
-      position: 'relative'
-    }}>
-      
-      {/* VSNEXAR Logo - blended with dark background */}
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1, type: "spring" }}
-        style={{ marginBottom: '10px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-      >
-        <img 
-          src={`${publicUrl}logo.png`} 
-          alt="VSNEXAR Logo" 
-          onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'block';
-          }}
-          className="hero-logo-img"
-          style={{ width: '280px', objectFit: 'contain', mixBlendMode: 'lighten' }}
-        />
-        <div style={{display: 'none'}}>
-          <h1 className="responsive-title" style={{ fontWeight: 800, marginBottom: '5px' }}>
-            <span style={{ color: '#06b6d4' }}>VS</span>
-            <span className="text-gradient">NEXAR</span>
-          </h1>
-          <p style={{ letterSpacing: '4px', fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>
-            Software Solutions
-          </p>
-        </div>
-      </motion.div>
+    <motion.div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        padding: 'clamp(80px, 15vh, 120px) 20px 40px',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        y,
+        opacity
+      }}
+    >
+      {/* Animated Background Elements */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        zIndex: 1
+      }}>
+        {/* Floating geometric shapes */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            style={{
+              position: 'absolute',
+              width: `${20 + Math.random() * 40}px`,
+              height: `${20 + Math.random() * 40}px`,
+              background: `linear-gradient(45deg, ${['#3b82f6', '#ec4899', '#a78bfa', '#06b6d4'][i % 4]}, transparent)`,
+              borderRadius: Math.random() > 0.5 ? '50%' : '4px',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              opacity: 0.1
+            }}
+            animate={{
+              y: [0, -30, 0],
+              x: [0, Math.random() * 20 - 10, 0],
+              rotate: [0, 360],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: Math.random() * 2
+            }}
+          />
+        ))}
 
-      {/* CEO Image - Circular Mask to hide white corners */}
-      <motion.div
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        className="hero-ceo-container"
-        style={{ 
-          width: '280px', 
-          height: '280px',
-          margin: '0 auto 20px',
-          zIndex: 5, 
-          position: 'relative',
-          borderRadius: '50%',
-          overflow: 'hidden',
-          border: '4px solid rgba(139, 92, 246, 0.4)',
-          boxShadow: '0 0 40px rgba(139, 92, 246, 0.2)'
-        }}
-      >
-        <img 
-          src={`${publicUrl}ceo-image.png`} 
-          alt="CEO - Bharani"
-          onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.parentElement.style.background = 'rgba(255,255,255,0.05)';
-          }}
-          className="hero-ceo-img"
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            objectFit: 'cover', 
-            objectPosition: 'top',
-            transform: 'scale(1.1)' 
-          }}
-        />
-        {/* Soft overlay gradient to melt into the dark background */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(circle at center, transparent 30%, rgba(7, 7, 20, 0.4) 100%)',
-          pointerEvents: 'none'
-        }} />
-      </motion.div>
+        {/* Gradient orbs */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={`orb-${i}`}
+            style={{
+              position: 'absolute',
+              width: '200px',
+              height: '200px',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, rgba(${i === 0 ? '59, 130, 246' : i === 1 ? '236, 72, 153' : '139, 92, 246'}, 0.1) 0%, transparent 70%)`,
+              left: `${20 + i * 30}%`,
+              top: `${10 + i * 20}%`,
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.3, 0.6, 0.3]
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: i * 2
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Hero Title Container */}
       <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        style={{ zIndex: 10, width: '100%', paddingTop: '10px' }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ zIndex: 10, width: '100%', maxWidth: '1200px' }}
       >
-        <h2 className="responsive-heading" style={{ fontWeight: 700, lineHeight: 1.2, marginBottom: '20px' }}>
-          Empowering Your Business <br />
-          <span className="responsive-subheading" style={{ fontWeight: 400 }}>
-            with <span style={{ color: '#8b5cf6', fontWeight: 600 }}>Cutting-Edge</span> Software Solutions
-          </span>
-        </h2>
-
-        {/* Search Bar */}
-        <form 
-          onSubmit={handleSearch}
+        {/* VSNEXAR Logo - blended with dark background */}
+        <motion.div
+          variants={itemVariants}
           style={{
+            marginBottom: 'clamp(20px, 5vh, 40px)',
             display: 'flex',
-            width: '100%',
-            maxWidth: '600px',
-            margin: '20px auto 0',
-            background: 'white',
-            borderRadius: '50px',
-            padding: '6px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+            flexDirection: 'column',
+            alignItems: 'center'
           }}
         >
-          <input 
-            type="text" 
-            className="search-input"
-            placeholder="What can we help you with?" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+          <motion.img
+            src={`${publicUrl}logo.png`}
+            alt="VSNEXAR Logo"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'block';
+            }}
+            className="hero-logo-img"
+            style={{
+              width: 'clamp(200px, 25vw, 350px)',
+              objectFit: 'contain',
+              mixBlendMode: 'lighten',
+              filter: 'drop-shadow(0 0 30px rgba(6, 182, 212, 0.3))'
+            }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 300 }}
           />
-          <button type="submit" className="search-button">
-            <FaSearch size={18} />
-          </button>
-        </form>
-      </motion.div>
+          <motion.div
+            style={{ display: 'none' }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.5, type: 'spring' }}
+          >
+            <h1 className="responsive-title" style={{
+              fontWeight: 800,
+              marginBottom: '5px',
+              fontSize: 'clamp(2rem, 8vw, 4rem)',
+              lineHeight: 1
+            }}>
+              <span style={{ color: '#06b6d4' }}>VS</span>
+              <span className="text-gradient">NEXAR</span>
+            </h1>
+            <p style={{
+              letterSpacing: 'clamp(2px, 1vw, 6px)',
+              fontSize: 'clamp(0.8rem, 2vw, 1.2rem)',
+              color: '#94a3b8',
+              textTransform: 'uppercase',
+              fontWeight: 300
+            }}>
+              Software Solutions
+            </p>
+          </motion.div>
+        </motion.div>
 
-    </div>
+        {/* CEO Image - Circular Mask to hide white corners */}
+        <motion.div
+          variants={itemVariants}
+          className="hero-ceo-container"
+          style={{
+            width: 'clamp(200px, 30vw, 320px)',
+            height: 'clamp(200px, 30vw, 320px)',
+            margin: '0 auto clamp(20px, 4vh, 40px)',
+            position: 'relative',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '4px solid rgba(139, 92, 246, 0.4)',
+            boxShadow: '0 0 60px rgba(139, 92, 246, 0.3)',
+            zIndex: 5
+          }}
+          whileHover={{
+            scale: 1.05,
+            boxShadow: '0 0 80px rgba(139, 92, 246, 0.4)'
+          }}
+          transition={{ type: 'spring', stiffness: 300 }}
+        >
+          <motion.img
+            src={`${publicUrl}ceo-image.png`}
+            alt="CEO - Bharani"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2))';
+              e.target.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:clamp(3rem, 8vw, 6rem)">👤</div>';
+            }}
+            className="hero-ceo-img"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'top',
+              transform: 'scale(1.1)'
+            }}
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1.1, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          />
+          {/* Soft overlay gradient to melt into the dark background */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'radial-gradient(circle at center, transparent 30%, rgba(7, 7, 20, 0.4) 100%)',
+            pointerEvents: 'none'
+          }} />
+        </motion.div>
+
+        {/* Hero Title Container */}
+        <motion.div
+          variants={itemVariants}
+          style={{
+            width: '100%',
+            paddingTop: 'clamp(10px, 2vh, 20px)',
+            zIndex: 10
+          }}
+        >
+          <motion.h2
+            className="responsive-heading"
+            style={{
+              fontWeight: 700,
+              lineHeight: 1.2,
+              marginBottom: 'clamp(15px, 3vh, 30px)',
+              fontSize: 'clamp(1.5rem, 6vw, 3.5rem)'
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            Empowering Your Business <br />
+            <span style={{
+              fontWeight: 400,
+              color: '#a78bfa'
+            }}>
+              with <span style={{
+                color: '#8b5cf6',
+                fontWeight: 600,
+                textShadow: '0 0 20px rgba(139, 92, 246, 0.5)'
+              }}>Cutting-Edge</span> Software Solutions
+            </span>
+          </motion.h2>
+
+          {/* Enhanced Search Bar */}
+          <motion.form
+            onSubmit={handleSearch}
+            style={{
+              display: 'flex',
+              width: '100%',
+              maxWidth: 'clamp(300px, 80vw, 700px)',
+              margin: 'clamp(20px, 4vh, 40px) auto 0',
+              background: 'rgba(20, 20, 45, 0.8)',
+              borderRadius: '50px',
+              padding: '6px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)'
+            }}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 1, type: 'spring', stiffness: 100 }}
+            whileHover={{
+              boxShadow: '0 15px 50px rgba(0,0,0,0.4)',
+              scale: 1.02
+            }}
+          >
+            <input
+              type="text"
+              className="search-input"
+              placeholder="What can we help you with?"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: 'transparent',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50px',
+                padding: 'clamp(12px, 3vw, 18px) clamp(20px, 4vw, 30px)',
+                width: '100%',
+                fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                fontFamily: 'Outfit, sans-serif',
+                outline: 'none'
+              }}
+            />
+            <motion.button
+              type="submit"
+              className="search-button"
+              style={{
+                background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50px',
+                padding: 'clamp(10px, 2.5vw, 16px) clamp(20px, 4vw, 35px)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                fontWeight: 600,
+                fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+              whileHover={{
+                scale: 1.05,
+                boxShadow: '0 5px 15px rgba(59, 130, 246, 0.4)'
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaSearch size={isMobile ? 14 : 18} />
+              {!isMobile && 'Search'}
+            </motion.button>
+          </motion.form>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            style={{
+              marginTop: 'clamp(30px, 6vh, 60px)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '10px'
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+          >
+            <motion.p
+              style={{
+                color: '#94a3b8',
+                fontSize: 'clamp(0.8rem, 1.5vw, 1rem)',
+                margin: 0
+              }}
+            >
+              Discover Our Services
+            </motion.p>
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+              style={{ cursor: 'pointer' }}
+              onClick={scrollToServices}
+              whileHover={{ scale: 1.1 }}
+            >
+              <FaArrowDown
+                size={isMobile ? 20 : 24}
+                color="#a78bfa"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(167, 139, 250, 0.5))' }}
+              />
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
 

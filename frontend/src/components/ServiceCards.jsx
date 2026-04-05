@@ -13,19 +13,46 @@ const ICON_MAP = {
   'content-creation': <FaPenNib size={40} color="#f97316" />
 };
 
+const TEAM_MEMBERS = {
+  'web-design': [
+    { name: 'Alice Smith', role: 'Frontend Dev', rating: 4.9 },
+    { name: 'John Doe', role: 'Fullstack Dev', rating: 4.8 }
+  ],
+  'logo-design': [
+    { name: 'Emma Wilson', role: 'Lead Designer', rating: 5.0 }
+  ],
+  'video-editing': [
+    { name: 'Chris Evans', role: 'Video Editor', rating: 4.7 }
+  ],
+  'photo-editing': [
+    { name: 'Sophia Lee', role: 'Retoucher', rating: 4.9 }
+  ],
+  'ui-ux-design': [
+    { name: 'Mia Chen', role: 'UI Designer', rating: 4.8 },
+    { name: 'Leo Park', role: 'UX Researcher', rating: 4.9 }
+  ],
+  'content-creation': [
+    { name: 'Nina Patel', role: 'Content Strategist', rating: 4.9 },
+    { name: 'Omar Ali', role: 'Video Producer', rating: 4.7 }
+  ]
+};
+
+const CLIENT_LOGOS = [
+  '🏢 TechCorp', '🏢 InnovateLabs', '🏢 GlobalTech', '🏢 StartupHub', '🏢 EnterpriseInc'
+];
+
 const DEFAULT_SERVICES = [
-  { id: 'web-design', title: 'Web Design', projects: 150, clients: 120, workers: 15 },
-  { id: 'logo-design', title: 'Logo Design', projects: 200, clients: 180, workers: 10 },
-  { id: 'photo-editing', title: 'Photo Editing', projects: 300, clients: 250, workers: 20 },
-  { id: 'video-editing', title: 'Video Editing', projects: 100, clients: 90, workers: 12 },
-  { id: 'ui-ux-design', title: 'UI/UX Design', projects: 180, clients: 160, workers: 18 },
-  { id: 'content-creation', title: 'Content Creation', projects: 250, clients: 220, workers: 14 }
+  { id: 'web-design', title: 'Web Design', projects: 150, clients: 85, workers: 12 },
+  { id: 'logo-design', title: 'Logo Design', projects: 200, clients: 120, workers: 8 },
+  { id: 'video-editing', title: 'Video Editing', projects: 95, clients: 60, workers: 6 },
+  { id: 'photo-editing', title: 'Photo Editing', projects: 180, clients: 95, workers: 10 },
+  { id: 'ui-ux-design', title: 'UI/UX Design', projects: 130, clients: 75, workers: 9 },
+  { id: 'content-creation', title: 'Content Creation', projects: 110, clients: 70, workers: 7 }
 ];
 
 const ServiceCards = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
-  const [selectedService, setSelectedService] = useState(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -40,11 +67,7 @@ const ServiceCards = () => {
   }, []);
 
   const handleServiceClick = (service) => {
-    setSelectedService(service);
-  };
-
-  const closeModal = () => {
-    setSelectedService(null);
+    navigate(`/service/${service.id}`);
   };
 
   const containerVariants = {
@@ -79,189 +102,181 @@ const ServiceCards = () => {
           variants={itemVariants}
           whileHover={{ 
             scale: 1.05,
-            rotateY: 10,
-            rotateX: 10,
-            z: 50
+            rotateY: 5,
+            rotateX: 5,
+            z: 30
           }}
           whileTap={{ scale: 0.95 }}
           onClick={() => handleServiceClick(service)}
           className="glass-card"
           style={{
-            flex: '1 1 200px',
-            maxWidth: '250px',
-            minWidth: '180px',
-            height: '220px',
+            flex: '1 1 300px',
+            maxWidth: '350px',
+            minWidth: '280px',
+            minHeight: '400px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
             cursor: 'pointer',
-            padding: '20px',
+            padding: '30px',
             textAlign: 'center',
             transformStyle: 'preserve-3d',
-            transition: 'transform 0.2s ease'
+            transition: 'all 0.3s ease',
+            position: 'relative',
+            overflow: 'hidden'
           }}
         >
-          <div style={{ marginBottom: '20px' }}>
-            {ICON_MAP[service.id] || <FaQuestionCircle size={40} color="#94a3b8" />}
-          </div>
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 600 }}>
-            {service.title.split(' ')[0]} <br/> {service.title.split(' ')[1] || ''}
-          </h3>
-        </motion.div>
-      ))}
-
-      {/* Modal for service details */}
-      {selectedService && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            position: 'fixed',
+          {/* Background gradient */}
+          <div style={{
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0,0,0,0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}
-          onClick={closeModal}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '20px',
-              padding: '40px',
-              maxWidth: '500px',
-              width: '90%',
-              textAlign: 'center',
-              border: '1px solid rgba(255,255,255,0.2)'
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ marginBottom: '30px' }}>
-              {ICON_MAP[selectedService.id] || <FaQuestionCircle size={60} color="#94a3b8" />}
+            background: `linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(236, 72, 153, 0.1))`,
+            zIndex: 1
+          }} />
+          
+          <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+            {/* Service Icon */}
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}
+            >
+              {ICON_MAP[service.id] || <FaQuestionCircle size={50} color="#94a3b8" />}
+            </motion.div>
+            
+            {/* Service Title */}
+            <h3 style={{ 
+              fontSize: '1.4rem', 
+              fontWeight: 700, 
+              marginBottom: '15px',
+              background: 'linear-gradient(90deg, #3b82f6, #ec4899)',
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent'
+            }}>
+              {service.title}
+            </h3>
+            
+            {/* Stats */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-around', 
+              marginBottom: '20px',
+              flexWrap: 'wrap',
+              gap: '10px'
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
+                  {service.projects}+
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Projects</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#10b981' }}>
+                  {service.clients}+
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Clients</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ec4899' }}>
+                  {TEAM_MEMBERS[service.id]?.length || 0}
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Experts</div>
+              </div>
             </div>
-            <h2 style={{ fontSize: '2rem', marginBottom: '20px' }}>{selectedService.title}</h2>
-            <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '20px' }}>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring' }}
-                style={{ textAlign: 'center', flex: '1 1 120px' }}
-              >
-                <motion.div
-                  animate={{ rotateY: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(45deg, #3b82f6, #1d4ed8)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 10px',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    transformStyle: 'preserve-3d',
-                    boxShadow: '0 10px 30px rgba(59, 130, 246, 0.5)',
-                    transform: 'rotateX(15deg)'
-                  }}
-                >
-                  {selectedService.projects}
-                </motion.div>
-                <p>Projects Done</p>
-              </motion.div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.4, type: 'spring' }}
-                style={{ textAlign: 'center', flex: '1 1 120px' }}
-              >
-                <motion.div
-                  animate={{ rotateY: -360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(45deg, #10b981, #059669)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 10px',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    transformStyle: 'preserve-3d',
-                    boxShadow: '0 10px 30px rgba(16, 185, 129, 0.5)',
-                    transform: 'rotateX(15deg)'
-                  }}
-                >
-                  {selectedService.clients}
-                </motion.div>
-                <p>Clients Served</p>
-              </motion.div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.6, type: 'spring' }}
-                style={{ textAlign: 'center', flex: '1 1 120px' }}
-              >
-                <motion.div
-                  animate={{ rotateY: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(45deg, #ec4899, #db2777)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 10px',
-                    color: 'white',
-                    fontSize: '1.5rem',
-                    fontWeight: 'bold',
-                    transformStyle: 'preserve-3d',
-                    boxShadow: '0 10px 30px rgba(236, 72, 153, 0.5)',
-                    transform: 'rotateX(15deg)'
-                  }}
-                >
-                  {selectedService.workers}
-                </motion.div>
-                <p>Expert Workers</p>
-              </motion.div>
+            
+            {/* Team Preview */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '0.9rem', color: '#a78bfa', marginBottom: '10px', fontWeight: '500' }}>
+                Meet Our Team
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {TEAM_MEMBERS[service.id]?.slice(0, 2).map((member, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ x: 5 }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '6px 10px',
+                      background: 'rgba(255,255,255,0.05)',
+                      borderRadius: '8px',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(45deg, #3b82f6, #ec4899)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px'
+                    }}>
+                      {member.name.charAt(0)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: '500', color: 'white' }}>{member.name}</div>
+                      <div style={{ color: '#94a3b8', fontSize: '0.7rem' }}>{member.role}</div>
+                    </div>
+                    <div style={{ color: '#eab308', fontSize: '0.7rem' }}>
+                      ⭐ {member.rating}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-            <button
-              onClick={closeModal}
+            
+            {/* Client Logos */}
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '8px' }}>
+                Trusted by
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                {CLIENT_LOGOS.slice(0, 3).map((client, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ scale: 1.1 }}
+                    style={{
+                      padding: '4px 8px',
+                      background: 'rgba(255,255,255,0.1)',
+                      borderRadius: '6px',
+                      fontSize: '0.7rem',
+                      color: '#a78bfa',
+                      fontWeight: '500'
+                    }}
+                  >
+                    {client}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            
+            {/* CTA Button */}
+            <motion.button
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(59, 130, 246, 0.3)' }}
+              whileTap={{ scale: 0.95 }}
               style={{
-                marginTop: '30px',
+                marginTop: '20px',
                 padding: '10px 20px',
-                background: 'rgba(255,255,255,0.2)',
-                border: 'none',
-                borderRadius: '10px',
-                color: 'white',
-                cursor: 'pointer'
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+                borderRadius: '8px',
+                color: '#3b82f6',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
               }}
             >
-              Close
-            </button>
-          </motion.div>
+              View Details →
+            </motion.button>
+          </div>
         </motion.div>
-      )}
+      ))}
     </motion.div>
   );
 };

@@ -35,6 +35,9 @@ jobs:
         run: |
           cd frontend
           npm run build
+        env:
+          VITE_SUPABASE_URL: https://wtcqzrriemcvuihddipt.supabase.co
+          VITE_SUPABASE_ANON_KEY: sb_publishable_K6Ec6g6KyGeLrd9amYQwHw_u2Qdg7Jo
       - name: Check dist
         run: ls -la frontend/dist
       - name: Setup Pages
