@@ -35,6 +35,8 @@ jobs:
         run: |
           cd frontend
           npm run build
+      - name: Check dist
+        run: ls -la frontend/dist
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
