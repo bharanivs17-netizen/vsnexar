@@ -4,6 +4,7 @@ import { FaSearch, FaArrowDown } from 'react-icons/fa';
 
 const HeroSection = () => {
   const publicUrl = import.meta.env.BASE_URL || '/';
+  const ceoImageUrl = `${publicUrl}ceo-image.png`;
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const { scrollY } = useScroll();
@@ -224,13 +225,13 @@ const HeroSection = () => {
           }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          <motion.img
-            src={`${publicUrl}ceo-image.png`}
+          <img
+            src={ceoImageUrl}
             alt="CEO - Bharani"
+            loading="eager"
             onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.parentElement.style.background = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2))';
-              e.target.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:clamp(3rem, 8vw, 6rem)">👤</div>';
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = `${publicUrl}logo.png`;
             }}
             className="hero-ceo-img"
             style={{
@@ -238,11 +239,9 @@ const HeroSection = () => {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'top',
-              transform: 'scale(1.1)'
+              transform: 'scale(1.1)',
+              display: 'block'
             }}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1.1, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
           />
           {/* Soft overlay gradient to melt into the dark background */}
           <div style={{

@@ -71,6 +71,7 @@ const Particles = () => {
 
 const SplashScreen = ({ onComplete }) => {
   const publicUrl = import.meta.env.BASE_URL || '/';
+  const ceoImageUrl = `${publicUrl}ceo-image.png`;
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -141,11 +142,12 @@ const SplashScreen = ({ onComplete }) => {
           }}
         >
           <img 
-            src={`${publicUrl}ceo-image.png`} 
+            src={ceoImageUrl}
             alt="CEO - Bharani"
+            loading="eager"
             onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,0.2);font-size:3rem">👤</div>';
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = `${publicUrl}logo.png`;
             }}
             style={{ 
               width: '100%', 
