@@ -239,7 +239,6 @@ const HeroSection = () => {
               height: '100%',
               objectFit: 'cover',
               objectPosition: 'top',
-              transform: 'scale(1.1)',
               display: 'block'
             }}
           />
