@@ -42,6 +42,26 @@ const mockData = {
     workers: [
       { id: 5, name: 'Sophia Lee', role: 'Retoucher', rating: 4.9 }
     ]
+  },
+  'ui-ux-design': {
+    title: 'UI/UX Design',
+    description: 'Designing intuitive, accessible, and beautiful digital experiences.',
+    projects: 180,
+    clients: 160,
+    workers: [
+      { id: 6, name: 'Mia Chen', role: 'UI Designer', rating: 4.8 },
+      { id: 7, name: 'Leo Park', role: 'UX Researcher', rating: 4.9 }
+    ]
+  },
+  'content-creation': {
+    title: 'Content Creation',
+    description: 'Crafting attention-grabbing digital content for brands and campaigns.',
+    projects: 250,
+    clients: 220,
+    workers: [
+      { id: 8, name: 'Nina Patel', role: 'Content Strategist', rating: 4.9 },
+      { id: 9, name: 'Omar Ali', role: 'Video Producer', rating: 4.7 }
+    ]
   }
 };
 
