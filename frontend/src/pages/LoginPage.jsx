@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
+  const supabaseConfigured = Boolean(supabase);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      if (!supabase) throw new Error("Supabase is not configured.");
+      if (!supabaseConfigured) throw new Error("Supabase is not configured. Check your environment variables.");
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -52,6 +53,12 @@ const LoginPage = () => {
         {errorMsg && (
           <div style={{ color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
             {errorMsg}
+          </div>
+        )}
+
+        {!supabaseConfigured && (
+          <div style={{ color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+            Supabase is not configured. Add <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> to your environment.
           </div>
         )}
 

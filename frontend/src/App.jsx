@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import TeamContact from './pages/TeamContact';
 import LoginPage from './pages/LoginPage';
@@ -12,17 +12,10 @@ import SplashScreen from './components/SplashScreen';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const navigate = useNavigate();
 
   const handleSplashComplete = () => {
     setShowSplash(false);
   };
-
-  useEffect(() => {
-    if (!showSplash) {
-      navigate('/');
-    }
-  }, [showSplash, navigate]);
 
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />;
