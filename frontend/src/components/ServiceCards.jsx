@@ -66,7 +66,7 @@ const ServiceCards = () => {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        gap: '30px',
+        gap: '20px',
         flexWrap: 'wrap',
         padding: '50px 20px',
         maxWidth: '1200px',
@@ -87,7 +87,9 @@ const ServiceCards = () => {
           onClick={() => handleServiceClick(service)}
           className="glass-card"
           style={{
-            width: '200px',
+            flex: '1 1 200px',
+            maxWidth: '250px',
+            minWidth: '180px',
             height: '220px',
             display: 'flex',
             flexDirection: 'column',
@@ -149,16 +151,16 @@ const ServiceCards = () => {
               {ICON_MAP[selectedService.id] || <FaQuestionCircle size={60} color="#94a3b8" />}
             </div>
             <h2 style={{ fontSize: '2rem', marginBottom: '20px' }}>{selectedService.title}</h2>
-            <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '20px' }}>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring' }}
-                style={{ textAlign: 'center', margin: '10px' }}
+                style={{ textAlign: 'center', flex: '1 1 120px' }}
               >
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  animate={{ rotateY: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
@@ -170,7 +172,10 @@ const ServiceCards = () => {
                     margin: '0 auto 10px',
                     color: 'white',
                     fontSize: '1.5rem',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    transformStyle: 'preserve-3d',
+                    boxShadow: '0 10px 30px rgba(59, 130, 246, 0.5)',
+                    transform: 'rotateX(15deg)'
                   }}
                 >
                   {selectedService.projects}
@@ -181,11 +186,11 @@ const ServiceCards = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.4, type: 'spring' }}
-                style={{ textAlign: 'center', margin: '10px' }}
+                style={{ textAlign: 'center', flex: '1 1 120px' }}
               >
                 <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  animate={{ rotateY: -360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
@@ -197,7 +202,10 @@ const ServiceCards = () => {
                     margin: '0 auto 10px',
                     color: 'white',
                     fontSize: '1.5rem',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    transformStyle: 'preserve-3d',
+                    boxShadow: '0 10px 30px rgba(16, 185, 129, 0.5)',
+                    transform: 'rotateX(15deg)'
                   }}
                 >
                   {selectedService.clients}
@@ -208,11 +216,11 @@ const ServiceCards = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.6, type: 'spring' }}
-                style={{ textAlign: 'center', margin: '10px' }}
+                style={{ textAlign: 'center', flex: '1 1 120px' }}
               >
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  animate={{ rotateY: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
@@ -224,7 +232,10 @@ const ServiceCards = () => {
                     margin: '0 auto 10px',
                     color: 'white',
                     fontSize: '1.5rem',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                    transformStyle: 'preserve-3d',
+                    boxShadow: '0 10px 30px rgba(236, 72, 153, 0.5)',
+                    transform: 'rotateX(15deg)'
                   }}
                 >
                   {selectedService.workers}

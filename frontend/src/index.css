@@ -94,9 +94,50 @@ body {
   transition: all 0.3s ease;
   font-weight: 600;
 }
-.search-button:hover {
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
-  transform: scale(1.05);
+@media (max-width: 768px) {
+  .hero-logo-img {
+    width: 200px !important;
+  }
+  .hero-ceo-container {
+    width: 200px !important;
+    height: 200px !important;
+  }
+  .responsive-title {
+    font-size: 2rem !important;
+  }
+  .glass-card {
+    padding: 15px !important;
+  }
+  .navbar {
+    padding: 10px 15px !important;
+  }
+  .nav-links {
+    gap: 10px !important;
+  }
+  .nav-link-item, .nav-login-btn {
+    font-size: 0.9rem !important;
+    padding: 8px 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-logo-img {
+    width: 150px !important;
+  }
+  .hero-ceo-container {
+    width: 150px !important;
+    height: 150px !important;
+  }
+  .responsive-title {
+    font-size: 1.5rem !important;
+  }
+  .navbar {
+    padding: 8px 10px !important;
+  }
+  .nav-links {
+    flex-direction: column !important;
+    gap: 5px !important;
+  }
 }
 
 /* Animated Particles */
