@@ -6,12 +6,14 @@ import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ServiceDetail from './components/ServiceDetail';
 import AnimatedBackground from './components/AnimatedBackground';
+import ThreeDBackground from './components/ThreeDBackground';
 import Navbar from './components/Navbar';
 
 function App() {
   return (
     <>
       <AnimatedBackground />
+      <ThreeDBackground />
       <Navbar />
       <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>
         <Routes>

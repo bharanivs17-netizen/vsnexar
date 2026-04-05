@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS public.services (
   description text,
   projects integer DEFAULT 0,
   clients integer DEFAULT 0,
+  workers integer DEFAULT 0,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -22,16 +23,19 @@ CREATE TABLE IF NOT EXISTS public.workers (
 );
 
 -- 3. Insert Default Data (using ON CONFLICT to avoid errors)
-INSERT INTO public.services (id, title, description, projects, clients) VALUES 
-('web-design', 'Web Design', 'Creating stunning, responsive, and dynamic web applications.', 145, 120),
-('logo-design', 'Logo Design', 'Crafting unique and memorable brand identities.', 320, 290),
-('video-editing', 'Video Editing', 'Professional video editing for social media, YouTube, and corporate.', 85, 60),
-('photo-editing', 'Photo Editing', 'High-end photo retouching and manipulation.', 400, 350)
+INSERT INTO public.services (id, title, description, projects, clients, workers) VALUES 
+('web-design', 'Web Design', 'Creating stunning, responsive, and dynamic web applications.', 145, 120, 15),
+('logo-design', 'Logo Design', 'Crafting unique and memorable brand identities.', 320, 290, 10),
+('video-editing', 'Video Editing', 'Professional video editing for social media, YouTube, and corporate.', 85, 60, 12),
+('photo-editing', 'Photo Editing', 'High-end photo retouching and manipulation.', 400, 350, 20),
+('ui-ux-design', 'UI/UX Design', 'Designing intuitive and user-friendly interfaces.', 180, 160, 18),
+('content-creation', 'Content Creation', 'Creating engaging content for digital marketing.', 250, 220, 14)
 ON CONFLICT (id) DO UPDATE SET 
   title = EXCLUDED.title,
   description = EXCLUDED.description,
   projects = EXCLUDED.projects,
-  clients = EXCLUDED.clients;
+  clients = EXCLUDED.clients,
+  workers = EXCLUDED.workers;
 
 -- Note: We skip workers insert on conflict to avoid unique constraint issues if id isn't known
 -- To refresh workers, run: DELETE FROM workers; and then paste the insert again.

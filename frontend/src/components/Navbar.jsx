@@ -25,7 +25,7 @@ const Navbar = () => {
       <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img 
-            src="/logo.png" 
+            src="/vsnexar/logo.png" 
             alt="VSNEXAR Logo" 
             onError={(e) => {
               e.target.style.display = 'none';

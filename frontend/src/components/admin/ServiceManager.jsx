@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
 import { FaTrash, FaEdit, FaPlus, FaSave, FaTimes } from 'react-icons/fa';
 
@@ -6,7 +7,7 @@ const ServiceManager = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({ id: '', title: '', description: '', projects: 0, clients: 0 });
+  const [editForm, setEditForm] = useState({ id: '', title: '', description: '', projects: 0, clients: 0, workers: 0 });
   const [showAdd, setShowAdd] = useState(false);
 
   useEffect(() => {
@@ -85,12 +86,20 @@ const ServiceManager = () => {
             <th style={{ padding: '10px' }}>Title</th>
             <th style={{ padding: '10px' }}>Projects</th>
             <th style={{ padding: '10px' }}>Clients</th>
+            <th style={{ padding: '10px' }}>Workers</th>
             <th style={{ padding: '10px' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {services.map(s => (
-            <tr key={s.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          {services.map((s, index) => (
+            <motion.tr 
+              key={s.id} 
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ background: 'rgba(255,255,255,0.05)', scale: 1.02 }}
+            >
               <td style={{ padding: '10px' }}>
                 {editingId === s.id ? <input value={editForm.id} readOnly className="search-input" style={{ width: '100px', opacity: 0.5 }} /> : s.id}
               </td>
@@ -102,6 +111,9 @@ const ServiceManager = () => {
               </td>
               <td style={{ padding: '10px' }}>
                 {editingId === s.id ? <input type="number" value={editForm.clients} onChange={e => setEditForm({...editForm, clients: parseInt(e.target.value)})} className="search-input" style={{ width: '60px' }} /> : s.clients}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === s.id ? <input type="number" value={editForm.workers} onChange={e => setEditForm({...editForm, workers: parseInt(e.target.value)})} className="search-input" style={{ width: '60px' }} /> : s.workers}
               </td>
               <td style={{ padding: '10px', display: 'flex', gap: '10px' }}>
                 {editingId === s.id ? (
@@ -116,7 +128,7 @@ const ServiceManager = () => {
                   </>
                 )}
               </td>
-            </tr>
+            </motion.tr>
           ))}
         </tbody>
       </table>

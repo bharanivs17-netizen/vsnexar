@@ -31,8 +31,45 @@ const AdminDashboard = () => {
   if (!user) return <div style={{ padding: '150px', textAlign: 'center', color: 'white' }}>Verifying Authentication...</div>;
 
   return (
-    <div style={{ paddingTop: '100px', padding: '120px 20px 50px', maxWidth: '1200px', margin: '0 auto' }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+    <div style={{ paddingTop: '100px', padding: '120px 20px 50px', maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
+      {/* 3D Background Elements */}
+      <div style={{
+        position: 'absolute',
+        top: '10%',
+        left: '5%',
+        width: '200px',
+        height: '200px',
+        background: 'linear-gradient(45deg, rgba(124, 58, 237, 0.1), rgba(236, 72, 153, 0.1))',
+        borderRadius: '50%',
+        filter: 'blur(50px)',
+        animation: 'float 6s ease-in-out infinite'
+      }} />
+      <div style={{
+        position: 'absolute',
+        bottom: '10%',
+        right: '5%',
+        width: '150px',
+        height: '150px',
+        background: 'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
+        borderRadius: '50%',
+        filter: 'blur(40px)',
+        animation: 'float 8s ease-in-out infinite reverse'
+      }} />
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }}
+        style={{
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '20px',
+          padding: '30px',
+          border: '1px solid rgba(255,255,255,0.1)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+          transform: 'perspective(1000px) rotateX(2deg)',
+          marginBottom: '30px'
+        }}
+      >
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
           <div>

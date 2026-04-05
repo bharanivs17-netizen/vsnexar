@@ -49,6 +49,14 @@ const CEOSpotlight = () => {
               width: '200px',
               height: 'auto',
               borderRadius: '20px',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)',
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05)'}
+            onMouseLeave={(e) => e.target.style.transform = 'perspective(1000px) rotateY(-5deg) rotateX(5deg)'}
+          />
+              borderRadius: '20px',
               boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
               border: '1px solid rgba(255,255,255,0.1)'
             }}

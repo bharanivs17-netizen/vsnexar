@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '../../supabaseClient';
 import { FaTrash, FaEdit, FaPlus, FaSave, FaTimes, FaCamera } from 'react-icons/fa';
 
@@ -93,8 +94,15 @@ const WorkerManager = () => {
           </tr>
         </thead>
         <tbody>
-          {workers.map(w => (
-            <tr key={w.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          {workers.map((w, index) => (
+            <motion.tr 
+              key={w.id} 
+              style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ background: 'rgba(255,255,255,0.05)', scale: 1.02 }}
+            >
               <td style={{ padding: '10px' }}>
                 {editingId === w.id ? <input value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} className="search-input" /> : w.name}
               </td>
@@ -126,7 +134,7 @@ const WorkerManager = () => {
                   </>
                 )}
               </td>
-            </tr>
+            </motion.tr>
           ))}
         </tbody>
       </table>
