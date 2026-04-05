@@ -25,13 +25,19 @@ const SERVICES = [
   { id: 'content-creation', title: 'Content Creation' }
 ];
 
+const TOTAL_STATS = {
+  projects: 1200,
+  clients: 950,
+  workers: 85
+};
+
 const Home = () => {
   const [showAutoModal, setShowAutoModal] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowAutoModal(true);
-    }, 120000); // 2 minutes
+    }, 2000); // 2 seconds
     return () => clearTimeout(timer);
   }, []);
 
@@ -47,6 +53,72 @@ const Home = () => {
   return (
     <div style={{ position: 'relative' }}>
       <HeroSection />
+      
+      {/* Stats Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '40px',
+          flexWrap: 'wrap',
+          padding: '80px 20px',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          textAlign: 'center'
+        }}
+      >
+        {Object.entries(TOTAL_STATS).map(([key, value], index) => (
+          <motion.div
+            key={key}
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            transition={{ delay: index * 0.1, type: 'spring', stiffness: 150 }}
+            style={{ textAlign: 'center', flex: '1 1 200px' }}
+          >
+            <motion.div
+              animate={{ rotateY: 360 }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              style={{
+                width: '120px',
+                height: '120px',
+                borderRadius: '50%',
+                background: `linear-gradient(45deg, ${
+                  key === 'projects' ? '#3b82f6, #1d4ed8' :
+                  key === 'clients' ? '#10b981, #059669' :
+                  '#ec4899, #db2777'
+                })`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                color: 'white',
+                fontSize: '2rem',
+                fontWeight: 'bold',
+                transformStyle: 'preserve-3d',
+                boxShadow: `0 15px 35px rgba(${
+                  key === 'projects' ? '59, 130, 246' :
+                  key === 'clients' ? '16, 185, 129' :
+                  '236, 72, 153'
+                }, 0.4)`,
+                transform: 'rotateX(15deg)'
+              }}
+            >
+              {value}+
+            </motion.div>
+            <h3 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
+              {key === 'projects' ? 'Total Projects' :
+               key === 'clients' ? 'Happy Clients' :
+               'Expert Workers'}
+            </h3>
+          </motion.div>
+        ))}
+      </motion.div>
+      
       <div className="service-cards">
         <ServiceCards />
       </div>
@@ -60,6 +132,7 @@ const Home = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           style={{
             position: 'fixed',
             top: 0,
@@ -78,6 +151,7 @@ const Home = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
             style={{
               background: 'rgba(255,255,255,0.1)',
               backdropFilter: 'blur(20px)',

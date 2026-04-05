@@ -99,7 +99,7 @@ const ServiceCards = () => {
             padding: '20px',
             textAlign: 'center',
             transformStyle: 'preserve-3d',
-            transition: 'transform 0.3s ease'
+            transition: 'transform 0.2s ease'
           }}
         >
           <div style={{ marginBottom: '20px' }}>
@@ -117,6 +117,7 @@ const ServiceCards = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           style={{
             position: 'fixed',
             top: 0,
@@ -135,6 +136,7 @@ const ServiceCards = () => {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
             style={{
               background: 'rgba(255,255,255,0.1)',
               backdropFilter: 'blur(20px)',
@@ -160,7 +162,7 @@ const ServiceCards = () => {
               >
                 <motion.div
                   animate={{ rotateY: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
@@ -190,7 +192,7 @@ const ServiceCards = () => {
               >
                 <motion.div
                   animate={{ rotateY: -360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
@@ -220,7 +222,7 @@ const ServiceCards = () => {
               >
                 <motion.div
                   animate={{ rotateY: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                   style={{
                     width: '80px',
                     height: '80px',
