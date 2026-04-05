@@ -12,7 +12,7 @@ export const siteSettings = {
   ceo: {
     name: 'Bharani',
     role: 'CEO & Senior Web Developer',
-    profilePic: '/vsnexar/ceo-image.png',
+    profilePic: 'ceo-image.png',
     description: 'As the CEO & Senior Web Developer, I am dedicated to transforming complex business challenges into seamless, premium software experiences. Link up with me below!'
   }
 };

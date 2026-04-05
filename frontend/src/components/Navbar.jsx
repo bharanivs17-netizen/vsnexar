@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Navbar = () => {
+  const publicUrl = import.meta.env.BASE_URL || '/';
   return (
     <motion.nav 
       initial={{ y: -100 }}
@@ -25,7 +26,7 @@ const Navbar = () => {
       <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img 
-            src="/vsnexar/logo.png" 
+            src={`${publicUrl}logo.png`} 
             alt="VSNEXAR Logo" 
             onError={(e) => {
               e.target.style.display = 'none';

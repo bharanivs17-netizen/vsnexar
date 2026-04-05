@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';
 
 const HeroSection = () => {
+  const publicUrl = import.meta.env.BASE_URL || '/';
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e) => {
@@ -35,7 +36,7 @@ const HeroSection = () => {
         style={{ marginBottom: '10px', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
         <img 
-          src="/logo.png" 
+          src={`${publicUrl}logo.png`} 
           alt="VSNEXAR Logo" 
           onError={(e) => {
             e.target.style.display = 'none';
@@ -74,7 +75,7 @@ const HeroSection = () => {
         }}
       >
         <img 
-          src="/ceo-image.png" 
+          src={`${publicUrl}ceo-image.png`} 
           alt="CEO - Bharani"
           onError={(e) => {
             e.target.style.display = 'none';

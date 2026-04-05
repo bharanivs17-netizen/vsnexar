@@ -4,6 +4,7 @@ import { FaPhone, FaLinkedin, FaEnvelope, FaUserTie } from 'react-icons/fa';
 import { siteSettings } from '../config/siteSettings';
 
 const CEOSpotlight = () => {
+  const publicUrl = import.meta.env.BASE_URL || '/';
   return (
     <motion.section
       initial={{ opacity: 0, y: 50 }}
@@ -39,27 +40,22 @@ const CEOSpotlight = () => {
           zIndex: -1
         }} />
         <img 
-          src={siteSettings.ceo.profilePic} 
+          src={`${publicUrl}${siteSettings.ceo.profilePic}`} 
           alt={`CEO ${siteSettings.ceo.name}`}
           onError={(e) => {
             e.target.style.display = 'none';
             e.target.parentElement.innerHTML = '<div style="width:180px;height:180px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:20px;border:1px dashed rgba(255,255,255,0.2)">CEO Photo</div>';
           }}
-            style={{
-              width: '200px',
-              height: 'auto',
-              borderRadius: '20px',
-              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
-              transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)',
-              transition: 'transform 0.3s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05)'}
-            onMouseLeave={(e) => e.target.style.transform = 'perspective(1000px) rotateY(-5deg) rotateX(5deg)'}
-          />
-              borderRadius: '20px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}
+          style={{
+            width: '200px',
+            height: 'auto',
+            borderRadius: '20px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+            transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)',
+            transition: 'transform 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.05)'}
+          onMouseLeave={(e) => e.target.style.transform = 'perspective(1000px) rotateY(-5deg) rotateX(5deg)'}
         />
       </div>
 
