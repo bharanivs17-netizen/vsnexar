@@ -190,10 +190,7 @@ const ServiceDetail = () => {
           <FaArrowLeft /> Back to Home
         </Link>
 
-        {loading ? (
-          <div style={{ padding: '100px', textAlign: 'center' }}>Loading live data...</div>
-        ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass" style={{ padding: '40px', borderRadius: '30px' }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass" style={{ padding: '40px', borderRadius: '30px' }}>
             <h1 className="text-gradient" style={{ fontSize: '3rem', marginBottom: '20px' }}>{ds.title} Solutions</h1>
             <p style={{ color: '#94a3b8', fontSize: '1.2rem', marginBottom: '40px' }}>{ds.description}</p>
 
@@ -226,7 +223,6 @@ const ServiceDetail = () => {
               ))}
             </div>
           </motion.div>
-        )}
       </div>
     </div>
   );

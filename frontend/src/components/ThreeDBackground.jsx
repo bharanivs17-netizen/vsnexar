@@ -1,22 +1,11 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars, Float, Text } from '@react-three/drei';
+import { OrbitControls, Stars } from '@react-three/drei';
 
 const Scene = () => {
   return (
     <>
       <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-      <Float speed={1.4} rotationIntensity={1} floatIntensity={2}>
-        <Text
-          position={[0, 0, 0]}
-          fontSize={2}
-          color="#ffffff"
-          anchorX="center"
-          anchorY="middle"
-        >
-          VSNEXAR
-        </Text>
-      </Float>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
     </>
