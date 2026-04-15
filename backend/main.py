@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 import os
+import httpx
 from dotenv import load_dotenv
-from supabase import create_client, Client
 
 load_dotenv()
 
@@ -13,25 +13,45 @@ app = FastAPI(title="VSNEXAR API", description="Backend for VSNEXAR Software Sol
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow your frontend URL in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Supabase Client Setup
-SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://placeholder.supabase.co")
-SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY", "placeholder")
-JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "placeholder-secret-from-supabase")
+# Supabase Configuration
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
+JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
 
-supabase: Client = None
-try:
-    if SUPABASE_URL and SUPABASE_KEY and SUPABASE_URL != "https://placeholder.supabase.co" and SUPABASE_KEY != "placeholder":
-        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-except Exception as e:
-    print(f"Failed to create Supabase client: {e}")
-    supabase = None
 auth_scheme = HTTPBearer()
+
+# Helper for Supabase HTTP requests
+async def supabase_request(method: str, path: str, json_data: dict = None, params: dict = None, token: str = None):
+    url = f"{SUPABASE_URL}/rest/v1/{path}"
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {token if token else SUPABASE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    }
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            if method.upper() == "GET":
+                response = await client.get(url, headers=headers, params=params)
+            elif method.upper() == "POST":
+                response = await client.post(url, headers=headers, json=json_data)
+            else:
+                raise HTTPException(status_code=405, detail="Method not allowed")
+            
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as e:
+            detail = e.response.json().get("message", e.response.text) if e.response.content else str(e)
+            raise HTTPException(status_code=e.response.status_code, detail=detail)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
 
 # Middleware for auth
 def verify_token(token: HTTPAuthorizationCredentials = Security(auth_scheme)):
@@ -53,55 +73,45 @@ def read_root():
     return {"message": "Welcome to VSNEXAR Backend API"}
 
 @app.get("/api/services")
-def get_services():
-    if supabase is None:
-        raise HTTPException(status_code=500, detail="Supabase not configured")
-    # Direct fetch from Supabase
-    response = supabase.table("services").select("*").execute()
-    return {"data": response.data}
+async def get_services():
+    data = await supabase_request("GET", "services", params={"select": "*"})
+    return {"data": data}
 
 @app.get("/api/search")
-def search_services(q: str = ""):
-    if supabase is None:
-        raise HTTPException(status_code=500, detail="Supabase not configured")
+async def search_services(q: str = ""):
     if not q:
         return {"data": []}
-    
-    # Search for services using ilike (case-insensitive)
-    response = supabase.table("services").select("*").ilike("title", f"%{q}%").execute()
-    return {"data": response.data}
+    # ilike in PostgREST is column=ilike.*term*
+    params = {
+        "select": "*",
+        "title": f"ilike.*{q}*"
+    }
+    data = await supabase_request("GET", "services", params=params)
+    return {"data": data}
 
 @app.post("/api/requests")
-def create_service_request(request_data: dict = Body(...)):
-    if supabase is None:
-        raise HTTPException(status_code=500, detail="Supabase not configured")
-    
-    try:
-        service_id = request_data.get("service_id")
-        name = request_data.get("customer_name")
-        email = request_data.get("customer_email")
-        reqs = request_data.get("requirements")
+async def create_service_request(request_data: dict = Body(...)):
+    service_id = request_data.get("service_id")
+    name = request_data.get("customer_name")
+    email = request_data.get("customer_email")
+    reqs = request_data.get("requirements")
 
-        if not all([service_id, name, email, reqs]):
-            raise HTTPException(status_code=400, detail="Missing required fields")
+    if not all([service_id, name, email, reqs]):
+        raise HTTPException(status_code=400, detail="Missing required fields")
 
-        response = supabase.table("service_requests").insert({
-            "service_id": service_id,
-            "customer_name": name,
-            "customer_email": email,
-            "requirements": reqs
-        }).execute()
+    data = await supabase_request("POST", "service_requests", json_data={
+        "service_id": service_id,
+        "customer_name": name,
+        "customer_email": email,
+        "requirements": reqs
+    })
 
-        return {"message": "Request successfully saved. We will share the information with the team.", "data": response.data}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return {"message": "Request successfully saved. We will share the information with the team.", "data": data}
 
 @app.get("/api/admin/dashboard", dependencies=[Depends(verify_token)])
 def get_admin_dashboard():
-    # This route is protected. Only users with a valid Supabase JWT can access.
     return {"message": "Welcome to the secure admin area", "status": "success"}
 
-# Example of how to start the server:
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

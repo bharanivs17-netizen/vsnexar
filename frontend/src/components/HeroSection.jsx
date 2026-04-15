@@ -228,7 +228,6 @@ const HeroSection = () => {
             style={{
               width: 'clamp(200px, 25vw, 350px)',
               objectFit: 'contain',
-              mixBlendMode: 'screen',
               filter: 'drop-shadow(0 0 30px rgba(6, 182, 212, 0.3))'
             }}
             whileHover={{ scale: 1.05 }}
