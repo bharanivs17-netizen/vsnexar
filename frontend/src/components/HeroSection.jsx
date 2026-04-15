@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaSearch, FaArrowDown } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 
 const HeroSection = () => {
   const publicUrl = import.meta.env.BASE_URL || '/';
   const ceoImageUrl = `${publicUrl}ceo-image.png`;
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 300], [0, -100]);
   const opacity = useTransform(scrollY, [0, 300], [1, 0.8]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -21,13 +26,65 @@ const HeroSection = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if(searchQuery.trim() === '') {
-      alert("Please enter a service you are looking for!");
+  // Default fallback services for when Supabase isn't available 
+  const fallbackServices = [
+    { id: 'web-design', title: 'Web Design', description: 'Creating stunning, responsive, and dynamic web applications.' },
+    { id: 'logo-design', title: 'Logo Design', description: 'Crafting unique and memorable brand identities.' },
+    { id: 'video-editing', title: 'Video Editing', description: 'Professional video editing for social media, YouTube, and corporate.' },
+    { id: 'photo-editing', title: 'Photo Editing', description: 'High-end photo retouching and manipulation.' },
+    { id: 'ui-ux-design', title: 'UI/UX Design', description: 'Designing intuitive, accessible, and beautiful digital experiences.' },
+    { id: 'content-creation', title: 'Content Creation', description: 'Crafting attention-grabbing digital content for brands and campaigns.' }
+  ];
+
+  const handleSearchChange = async (e) => {
+    const q = e.target.value;
+    setSearchQuery(q);
+
+    if (q.length < 2) {
+      setShowResults(false);
+      setSearchResults([]);
       return;
     }
-    alert(`Searching our database for: ${searchQuery}`);
+
+    // Try searching from Supabase first
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('id, title, description')
+          .ilike('title', `%${q}%`);
+        
+        if (!error && data && data.length > 0) {
+          setSearchResults(data);
+          setShowResults(true);
+          return;
+        }
+      } catch (err) {
+        console.warn("Supabase search failed, using fallback:", err);
+      }
+    }
+
+    // Fallback: search locally
+    const filtered = fallbackServices.filter(s => 
+      s.title.toLowerCase().includes(q.toLowerCase()) ||
+      s.description.toLowerCase().includes(q.toLowerCase())
+    );
+    setSearchResults(filtered);
+    setShowResults(filtered.length > 0);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchResults.length > 0) {
+      navigate(`/service/${searchResults[0].id}`);
+      setShowResults(false);
+      setSearchQuery('');
+    }
+  };
+
+  const handleResultClick = (serviceId) => {
+    navigate(`/service/${serviceId}`);
+    setShowResults(false);
     setSearchQuery('');
   };
 
@@ -286,74 +343,117 @@ const HeroSection = () => {
             </span>
           </motion.h2>
 
-          {/* Enhanced Search Bar */}
-          <motion.form
-            onSubmit={handleSearch}
-            style={{
-              display: 'flex',
-              width: '100%',
-              maxWidth: 'clamp(300px, 80vw, 700px)',
-              margin: 'clamp(20px, 4vh, 40px) auto 0',
-              background: 'rgba(20, 20, 45, 0.8)',
-              borderRadius: '50px',
-              padding: '6px',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
-            }}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 1, type: 'spring', stiffness: 100 }}
-            whileHover={{
-              boxShadow: '0 15px 50px rgba(0,0,0,0.4)',
-              scale: 1.02
-            }}
-          >
-            <input
-              type="text"
-              className="search-input"
-              placeholder="What can we help you with?"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+          {/* Enhanced Search Bar - Connected to Database */}
+          <div style={{ position: 'relative', width: '100%', maxWidth: 'clamp(300px, 80vw, 700px)', margin: 'clamp(20px, 4vh, 40px) auto 0' }}>
+            <motion.form
+              onSubmit={handleSearch}
               style={{
-                background: 'transparent',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50px',
-                padding: 'clamp(12px, 3vw, 18px) clamp(20px, 4vw, 30px)',
-                width: '100%',
-                fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                fontFamily: 'Outfit, sans-serif',
-                outline: 'none'
-              }}
-            />
-            <motion.button
-              type="submit"
-              className="search-button"
-              style={{
-                background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '50px',
-                padding: 'clamp(10px, 2.5vw, 16px) clamp(20px, 4vw, 35px)',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                fontWeight: 600,
-                fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
                 display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
+                width: '100%',
+                background: 'rgba(20, 20, 45, 0.8)',
+                borderRadius: '50px',
+                padding: '6px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)'
               }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 1, type: 'spring', stiffness: 100 }}
               whileHover={{
-                scale: 1.05,
-                boxShadow: '0 5px 15px rgba(59, 130, 246, 0.4)'
+                boxShadow: '0 15px 50px rgba(0,0,0,0.4)',
+                scale: 1.02
               }}
-              whileTap={{ scale: 0.95 }}
             >
-              <FaSearch size={isMobile ? 14 : 18} />
-              {!isMobile && 'Search'}
-            </motion.button>
-          </motion.form>
+              <input
+                type="text"
+                className="search-input"
+                placeholder="What can we help you with?"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={() => { if (searchQuery.length > 1) setShowResults(true); }}
+                onBlur={() => setTimeout(() => setShowResults(false), 300)}
+                style={{
+                  background: 'transparent',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50px',
+                  padding: 'clamp(12px, 3vw, 18px) clamp(20px, 4vw, 30px)',
+                  width: '100%',
+                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                  fontFamily: 'Outfit, sans-serif',
+                  outline: 'none'
+                }}
+              />
+              <motion.button
+                type="submit"
+                className="search-button"
+                style={{
+                  background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '50px',
+                  padding: 'clamp(10px, 2.5vw, 16px) clamp(20px, 4vw, 35px)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  fontWeight: 600,
+                  fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: '0 5px 15px rgba(59, 130, 246, 0.4)'
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaSearch size={isMobile ? 14 : 18} />
+                {!isMobile && 'Search'}
+              </motion.button>
+            </motion.form>
+
+            {/* Search Results Dropdown */}
+            {showResults && searchResults.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '6px',
+                  right: '6px',
+                  marginTop: '10px',
+                  background: 'rgba(15, 15, 35, 0.98)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                  backdropFilter: 'blur(20px)',
+                  zIndex: 100
+                }}
+              >
+                {searchResults.map((result) => (
+                  <div 
+                    key={result.id}
+                    onMouseDown={() => handleResultClick(result.id)}
+                    style={{
+                      padding: '18px 24px',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      transition: 'background 0.2s ease',
+                      color: 'white'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'rgba(59, 130, 246, 0.15)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ fontWeight: 'bold', color: '#06b6d4', marginBottom: '4px' }}>{result.title}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{result.description?.substring(0, 80)}...</div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </div>
 
           {/* Scroll Indicator */}
           <motion.div

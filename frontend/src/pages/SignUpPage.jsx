@@ -20,7 +20,10 @@ const SignUpPage = () => {
     setSuccess(false);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      if (!supabase) throw new Error("Supabase is not configured. Check your environment variables.");
+
+      // 1. Sign up the user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -29,10 +32,37 @@ const SignUpPage = () => {
           }
         }
       });
+      if (signUpError) throw signUpError;
 
-      if (error) throw error;
-      setSuccess(true);
-      setTimeout(() => navigate('/login'), 3000);
+      // 2. Also save user info to our custom users table for easy admin access
+      try {
+        await supabase.from('users').insert({
+          email: email,
+          full_name: name,
+          role: 'user'
+        });
+      } catch (dbErr) {
+        console.warn("Could not save to users table (table may not exist yet):", dbErr);
+      }
+
+      // 3. Auto sign-in after signup
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        // If auto sign-in fails (e.g. email confirmation required), redirect to login
+        setSuccess(true);
+        setTimeout(() => navigate('/login'), 3000);
+        return;
+      }
+
+      // 4. If sign-in succeeds, go directly to admin
+      if (signInData.session) {
+        setSuccess(true);
+        setTimeout(() => navigate('/admin'), 1500);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -47,7 +77,7 @@ const SignUpPage = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px',
-      paddingTop: '80px',
+      paddingTop: '100px',
       position: 'relative'
     }}>
       {/* Background decoration */}
@@ -105,7 +135,7 @@ const SignUpPage = () => {
 
         {success && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '15px', borderRadius: '12px', marginBottom: '20px', border: '1px solid rgba(16, 185, 129, 0.2)', textAlign: 'center', fontSize: '0.9rem' }}>
-            Registration successful! You can now log in. Redirecting...
+            Account created successfully! Redirecting to dashboard...
           </motion.div>
         )}
 
@@ -118,7 +148,7 @@ const SignUpPage = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease' }}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
             />
           </div>
           
@@ -130,7 +160,7 @@ const SignUpPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease' }}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
             />
           </div>
 
@@ -138,11 +168,12 @@ const SignUpPage = () => {
             <FaLock style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Password (min 6 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease' }}
+              minLength={6}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
             />
           </div>
 

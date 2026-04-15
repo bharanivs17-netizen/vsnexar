@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { FaEnvelope, FaLock, FaSignInAlt } from 'react-icons/fa';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -38,64 +39,163 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ paddingTop: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', padding: '0 20px' }}>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      paddingTop: '100px',
+      position: 'relative'
+    }}>
+      {/* Background decoration */}
+      <div style={{
+        position: 'absolute',
+        top: '30%',
+        right: '20%',
+        width: '300px',
+        height: '300px',
+        background: 'linear-gradient(45deg, rgba(236, 72, 153, 0.15), rgba(124, 58, 237, 0.15))',
+        borderRadius: '50%',
+        filter: 'blur(60px)',
+        zIndex: 0
+      }} />
+
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="glass"
-        style={{ padding: '40px', borderRadius: '20px', width: '100%', maxWidth: '400px' }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, type: 'spring' }}
+        style={{
+          width: '100%',
+          maxWidth: '450px',
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(20px)',
+          padding: '40px',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          zIndex: 1
+        }}
       >
-        <h2 style={{ fontSize: '2rem', marginBottom: '20px', textAlign: 'center' }} className="text-gradient">
-          Welcome Back
-        </h2>
-        <p style={{ color: '#94a3b8', textAlign: 'center', marginBottom: '30px' }}>Sign in to VSNEXAR dashboard.</p>
+        <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            background: 'linear-gradient(135deg, #3b82f6, #ec4899)',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+            boxShadow: '0 10px 25px rgba(59, 130, 246, 0.5)'
+          }}>
+            <FaSignInAlt size={24} color="white" />
+          </div>
+          <h2 style={{ color: 'white', fontSize: '2rem', marginBottom: '10px' }}>Welcome Back</h2>
+          <p style={{ color: '#94a3b8' }}>Sign in to VSNEXAR dashboard</p>
+        </div>
 
         {errorMsg && (
-          <div style={{ color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: '#ef4444',
+            padding: '15px',
+            borderRadius: '12px',
+            marginBottom: '20px',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            textAlign: 'center',
+            fontSize: '0.9rem'
+          }}>
             {errorMsg}
-          </div>
+          </motion.div>
         )}
 
         {!supabaseConfigured && (
-          <div style={{ color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', padding: '10px', borderRadius: '5px', marginBottom: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+          <div style={{
+            color: '#fbbf24',
+            backgroundColor: 'rgba(251, 191, 36, 0.1)',
+            padding: '15px',
+            borderRadius: '12px',
+            marginBottom: '20px',
+            border: '1px solid rgba(251, 191, 36, 0.2)',
+            textAlign: 'center',
+            fontSize: '0.9rem'
+          }}>
             Supabase is not configured. Add <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> to your environment.
           </div>
         )}
 
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: '#a78bfa' }}>Email Address</label>
+          <div style={{ position: 'relative' }}>
+            <FaEnvelope style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
             <input 
               type="email" 
+              placeholder="Email Address"
               required
               disabled={loading}
-              className="search-input"
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '15px 15px 15px 45px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                color: 'white',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
             />
           </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: '#a78bfa' }}>Password</label>
+
+          <div style={{ position: 'relative' }}>
+            <FaLock style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
             <input 
               type="password" 
+              placeholder="Password"
               required
               disabled={loading}
-              className="search-input"
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '15px 15px 15px 45px',
+                background: 'rgba(0, 0, 0, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                color: 'white',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'all 0.3s ease',
+                boxSizing: 'border-box'
+              }}
             />
-            <motion.button
+          </div>
+
+          <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            style={{ width: '100%', padding: '15px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: '10px', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)' }}
+            style={{
+              width: '100%',
+              padding: '15px',
+              background: 'linear-gradient(90deg, #3b82f6, #ec4899)',
+              border: 'none',
+              borderRadius: '12px',
+              color: 'white',
+              fontSize: '1.1rem',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              marginTop: '10px',
+              boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)'
+            }}
           >
             {loading ? 'Authenticating...' : 'Sign In'}
           </motion.button>
-          </div>
         </form>
 
         <div style={{ marginTop: '30px', textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem' }}>
