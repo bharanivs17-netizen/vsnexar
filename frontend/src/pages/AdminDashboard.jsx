@@ -4,7 +4,8 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import ServiceManager from '../components/admin/ServiceManager';
 import WorkerManager from '../components/admin/WorkerManager';
-import { FaSignOutAlt, FaDatabase, FaUsers } from 'react-icons/fa';
+import SiteContentManager from '../components/admin/SiteContentManager';
+import { FaSignOutAlt, FaDatabase, FaUsers, FaGlobe } from 'react-icons/fa';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('services');
@@ -109,6 +110,19 @@ const AdminDashboard = () => {
           >
             <FaUsers /> Team Members
           </button>
+          <button 
+            onClick={() => setActiveTab('site')}
+            className={`glass ${activeTab === 'site' ? 'text-gradient' : ''}`}
+            style={{ 
+              padding: '12px 25px', 
+              borderRadius: '12px', 
+              border: activeTab === 'site' ? '1px solid #3b82f6' : '1px solid rgba(255,255,255,0.1)',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            <FaGlobe /> Site Settings
+          </button>
         </div>
 
         {/* Content Area */}
@@ -118,7 +132,9 @@ const AdminDashboard = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {activeTab === 'services' ? <ServiceManager /> : <WorkerManager />}
+          {activeTab === 'services' && <ServiceManager />}
+          {activeTab === 'workers' && <WorkerManager />}
+          {activeTab === 'site' && <SiteContentManager />}
         </motion.div>
 
       </motion.div>

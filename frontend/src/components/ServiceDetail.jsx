@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
 import { FaStar, FaUserCircle, FaArrowLeft, FaEnvelope, FaPhone, FaLinkedin } from 'react-icons/fa';
@@ -127,7 +127,47 @@ const ServiceDetail = () => {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [reqName, setReqName] = useState('');
+  const [reqEmail, setReqEmail] = useState('');
+  const [reqDetails, setReqDetails] = useState('');
+  const [reqLoading, setReqLoading] = useState(false);
+  const [reqSuccess, setReqSuccess] = useState('');
+  const [reqError, setReqError] = useState('');
+  const navigate = useNavigate();
+
   const fallbackService = mockData[id] || mockData['web-design'];
+
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    setReqLoading(true);
+    setReqError('');
+    setReqSuccess('');
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: id,
+          customer_name: reqName,
+          customer_email: reqEmail,
+          requirements: reqDetails
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || 'Failed to submit request');
+      
+      setReqSuccess(data.message || 'We will share the information to the team!');
+      setTimeout(() => {
+        navigate('/contact');
+      }, 3000);
+    } catch (err) {
+      setReqError(err.message);
+    } finally {
+      setReqLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -221,6 +261,60 @@ const ServiceDetail = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div style={{ marginTop: '60px', padding: '30px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '20px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+              <h3 style={{ fontSize: '1.8rem', marginBottom: '10px' }}>Need {ds.title}? Provide your requirements!</h3>
+              <p style={{ color: '#94a3b8', marginBottom: '20px' }}>Fill out the form below and we will share the information with our team right away.</p>
+              
+              {reqSuccess && (
+                <div style={{ background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '15px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center' }}>
+                  {reqSuccess} Redirecting to contact page...
+                </div>
+              )}
+              {reqError && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '15px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center' }}>
+                  {reqError}
+                </div>
+              )}
+
+              <form onSubmit={handleRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Your Name" 
+                    required
+                    value={reqName}
+                    onChange={(e) => setReqName(e.target.value)}
+                    style={{ flex: 1, minWidth: '200px', padding: '15px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+                  />
+                  <input 
+                    type="email" 
+                    placeholder="Your Email Address" 
+                    required
+                    value={reqEmail}
+                    onChange={(e) => setReqEmail(e.target.value)}
+                    style={{ flex: 1, minWidth: '200px', padding: '15px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white' }}
+                  />
+                </div>
+                <textarea 
+                  placeholder="Describe your project requirements (e.g., I need a 5 minute music video edited...)"
+                  required
+                  rows="4"
+                  value={reqDetails}
+                  onChange={(e) => setReqDetails(e.target.value)}
+                  style={{ padding: '15px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', resize: 'vertical' }}
+                ></textarea>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  disabled={reqLoading}
+                  type="submit"
+                  style={{ padding: '15px 30px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '10px', color: 'white', fontWeight: 'bold', fontSize: '1.1rem', cursor: reqLoading ? 'not-allowed' : 'pointer' }}
+                >
+                  {reqLoading ? 'Submitting...' : 'Submit Requirement →'}
+                </motion.button>
+              </form>
             </div>
           </motion.div>
       </div>

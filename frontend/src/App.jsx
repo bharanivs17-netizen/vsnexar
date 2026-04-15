@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import TeamContact from './pages/TeamContact';
 import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ServiceDetail from './components/ServiceDetail';
 import AnimatedBackground from './components/AnimatedBackground';
@@ -30,6 +31,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/contact" element={<TeamContact />} />
           <Route path="/service/:id" element={<ServiceDetail />} />

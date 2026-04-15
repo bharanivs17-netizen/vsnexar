@@ -86,15 +86,27 @@ const LoginPage = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={loading}
+            style={{ width: '100%', padding: '15px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: '10px', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)' }}
+          >
+            {loading ? 'Authenticating...' : 'Sign In'}
+          </motion.button>
           </div>
-          <button type="submit" disabled={loading} className="search-button" style={{ marginTop: '10px' }}>
-            {loading ? 'Authenticating...' : 'Login securely'}
-          </button>
         </form>
+
+        <div style={{ marginTop: '30px', textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem' }}>
+          Don't have an account?{' '}
+          <Link to="/signup" style={{ color: '#06b6d4', textDecoration: 'none', fontWeight: 600 }}>
+            Sign Up
+          </Link>
+        </div>
       </motion.div>
     </div>
   );
 };
 
 export default LoginPage;
-

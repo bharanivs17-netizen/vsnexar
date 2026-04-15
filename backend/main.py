@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Security
+from fastapi import FastAPI, Depends, HTTPException, Security, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
@@ -59,6 +59,42 @@ def get_services():
     # Direct fetch from Supabase
     response = supabase.table("services").select("*").execute()
     return {"data": response.data}
+
+@app.get("/api/search")
+def search_services(q: str = ""):
+    if supabase is None:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    if not q:
+        return {"data": []}
+    
+    # Search for services using ilike (case-insensitive)
+    response = supabase.table("services").select("*").ilike("title", f"%{q}%").execute()
+    return {"data": response.data}
+
+@app.post("/api/requests")
+def create_service_request(request_data: dict = Body(...)):
+    if supabase is None:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    
+    try:
+        service_id = request_data.get("service_id")
+        name = request_data.get("customer_name")
+        email = request_data.get("customer_email")
+        reqs = request_data.get("requirements")
+
+        if not all([service_id, name, email, reqs]):
+            raise HTTPException(status_code=400, detail="Missing required fields")
+
+        response = supabase.table("service_requests").insert({
+            "service_id": service_id,
+            "customer_name": name,
+            "customer_email": email,
+            "requirements": reqs
+        }).execute()
+
+        return {"message": "Request successfully saved. We will share the information with the team.", "data": response.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/admin/dashboard", dependencies=[Depends(verify_token)])
 def get_admin_dashboard():
