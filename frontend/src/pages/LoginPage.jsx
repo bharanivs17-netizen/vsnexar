@@ -28,7 +28,19 @@ const LoginPage = () => {
       if (error) throw error;
       
       if (data.session) {
-        navigate('/admin');
+        // Check if user is admin
+        const { data: userData } = await supabase
+          .from('users')
+          .select('role')
+          .eq('email', email)
+          .single();
+
+        if (userData && userData.role === 'admin') {
+          navigate('/admin');
+        } else {
+          // Regular users go to home page
+          navigate('/');
+        }
       }
     } catch (err) {
       console.error("Login Error:", err.message);
@@ -48,7 +60,6 @@ const LoginPage = () => {
       paddingTop: '100px',
       position: 'relative'
     }}>
-      {/* Background decoration */}
       <div style={{
         position: 'absolute',
         top: '30%',
@@ -92,19 +103,13 @@ const LoginPage = () => {
             <FaSignInAlt size={24} color="white" />
           </div>
           <h2 style={{ color: 'white', fontSize: '2rem', marginBottom: '10px' }}>Welcome Back</h2>
-          <p style={{ color: '#94a3b8' }}>Sign in to VSNEXAR dashboard</p>
+          <p style={{ color: '#94a3b8' }}>Sign in to VSNEXAR</p>
         </div>
 
         {errorMsg && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            color: '#ef4444',
-            padding: '15px',
-            borderRadius: '12px',
-            marginBottom: '20px',
-            border: '1px solid rgba(239, 68, 68, 0.2)',
-            textAlign: 'center',
-            fontSize: '0.9rem'
+            background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '15px', borderRadius: '12px',
+            marginBottom: '20px', border: '1px solid rgba(239, 68, 68, 0.2)', textAlign: 'center', fontSize: '0.9rem'
           }}>
             {errorMsg}
           </motion.div>
@@ -112,14 +117,8 @@ const LoginPage = () => {
 
         {!supabaseConfigured && (
           <div style={{
-            color: '#fbbf24',
-            backgroundColor: 'rgba(251, 191, 36, 0.1)',
-            padding: '15px',
-            borderRadius: '12px',
-            marginBottom: '20px',
-            border: '1px solid rgba(251, 191, 36, 0.2)',
-            textAlign: 'center',
-            fontSize: '0.9rem'
+            color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)', padding: '15px', borderRadius: '12px',
+            marginBottom: '20px', border: '1px solid rgba(251, 191, 36, 0.2)', textAlign: 'center', fontSize: '0.9rem'
           }}>
             Supabase is not configured. Add <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> to your environment.
           </div>
@@ -128,81 +127,25 @@ const LoginPage = () => {
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ position: 'relative' }}>
             <FaEnvelope style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
-            <input 
-              type="email" 
-              placeholder="Email Address"
-              required
-              disabled={loading}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '15px 15px 15px 45px',
-                background: 'rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                color: 'white',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'all 0.3s ease',
-                boxSizing: 'border-box'
-              }}
-            />
+            <input type="email" placeholder="Email Address" required disabled={loading} value={email} onChange={(e) => setEmail(e.target.value)}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
           </div>
 
           <div style={{ position: 'relative' }}>
             <FaLock style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
-            <input 
-              type="password" 
-              placeholder="Password"
-              required
-              disabled={loading}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '15px 15px 15px 45px',
-                background: 'rgba(0, 0, 0, 0.2)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                color: 'white',
-                fontSize: '1rem',
-                outline: 'none',
-                transition: 'all 0.3s ease',
-                boxSizing: 'border-box'
-              }}
-            />
+            <input type="password" placeholder="Password" required disabled={loading} value={password} onChange={(e) => setPassword(e.target.value)}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '15px',
-              background: 'linear-gradient(90deg, #3b82f6, #ec4899)',
-              border: 'none',
-              borderRadius: '12px',
-              color: 'white',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              marginTop: '10px',
-              boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)'
-            }}
-          >
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading}
+            style={{ width: '100%', padding: '15px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: '10px', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)' }}>
             {loading ? 'Authenticating...' : 'Sign In'}
           </motion.button>
         </form>
 
         <div style={{ marginTop: '30px', textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem' }}>
           Don't have an account?{' '}
-          <Link to="/signup" style={{ color: '#06b6d4', textDecoration: 'none', fontWeight: 600 }}>
-            Sign Up
-          </Link>
+          <Link to="/signup" style={{ color: '#06b6d4', textDecoration: 'none', fontWeight: 600 }}>Sign Up</Link>
         </div>
       </motion.div>
     </div>

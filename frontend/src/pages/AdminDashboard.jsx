@@ -17,9 +17,23 @@ const AdminDashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate('/login');
-      } else {
-        setUser(user);
+        return;
       }
+
+      // Verify this user is an admin in the users table
+      const { data: userData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('email', user.email)
+        .single();
+
+      if (!userData || userData.role !== 'admin') {
+        alert('Access denied. Admin privileges required.');
+        navigate('/');
+        return;
+      }
+
+      setUser(user);
     };
     checkUser();
   }, [navigate]);

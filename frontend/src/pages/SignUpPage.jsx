@@ -34,7 +34,7 @@ const SignUpPage = () => {
       });
       if (signUpError) throw signUpError;
 
-      // 2. Also save user info to our custom users table for easy admin access
+      // 2. Save user info to our custom users table (role = 'user', NOT admin)
       try {
         await supabase.from('users').insert({
           email: email,
@@ -42,27 +42,12 @@ const SignUpPage = () => {
           role: 'user'
         });
       } catch (dbErr) {
-        console.warn("Could not save to users table (table may not exist yet):", dbErr);
+        console.warn("Could not save to users table:", dbErr);
       }
 
-      // 3. Auto sign-in after signup
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (signInError) {
-        // If auto sign-in fails (e.g. email confirmation required), redirect to login
-        setSuccess(true);
-        setTimeout(() => navigate('/login'), 3000);
-        return;
-      }
-
-      // 4. If sign-in succeeds, go directly to admin
-      if (signInData.session) {
-        setSuccess(true);
-        setTimeout(() => navigate('/admin'), 1500);
-      }
+      setSuccess(true);
+      // Regular users go to home page, NOT admin
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -80,7 +65,6 @@ const SignUpPage = () => {
       paddingTop: '100px',
       position: 'relative'
     }}>
-      {/* Background decoration */}
       <div style={{
         position: 'absolute',
         top: '20%',
@@ -135,64 +119,38 @@ const SignUpPage = () => {
 
         {success && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '15px', borderRadius: '12px', marginBottom: '20px', border: '1px solid rgba(16, 185, 129, 0.2)', textAlign: 'center', fontSize: '0.9rem' }}>
-            Account created successfully! Redirecting to dashboard...
+            Account created successfully! Redirecting to home...
           </motion.div>
         )}
 
         <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ position: 'relative' }}>
             <FaUser style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
-            />
+            <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
           </div>
           
           <div style={{ position: 'relative' }}>
             <FaEnvelope style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
-            <input
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
-            />
+            <input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} required
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
           </div>
 
           <div style={{ position: 'relative' }}>
             <FaLock style={{ position: 'absolute', top: '16px', left: '16px', color: '#94a3b8' }} />
-            <input
-              type="password"
-              placeholder="Password (min 6 characters)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', transition: 'all 0.3s ease', boxSizing: 'border-box' }}
-            />
+            <input type="password" placeholder="Password (min 6 characters)" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
+              style={{ width: '100%', padding: '15px 15px 15px 45px', background: 'rgba(0, 0, 0, 0.2)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '12px', color: 'white', fontSize: '1rem', outline: 'none', boxSizing: 'border-box' }} />
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={loading}
-            style={{ width: '100%', padding: '15px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: '10px', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)' }}
-          >
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading}
+            style={{ width: '100%', padding: '15px', background: 'linear-gradient(90deg, #3b82f6, #ec4899)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '1.1rem', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, marginTop: '10px', boxShadow: '0 10px 20px rgba(59, 130, 246, 0.3)' }}>
             {loading ? 'Creating Account...' : 'Sign Up'}
           </motion.button>
         </form>
 
         <div style={{ marginTop: '30px', textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem' }}>
           Already have an account?{' '}
-          <Link to="/login" style={{ color: '#06b6d4', textDecoration: 'none', fontWeight: 600 }}>
-            Sign In
-          </Link>
+          <Link to="/login" style={{ color: '#06b6d4', textDecoration: 'none', fontWeight: 600 }}>Sign In</Link>
         </div>
       </motion.div>
     </div>
