@@ -33,7 +33,7 @@ const Navbar = () => {
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
             }}
-            style={{ height: '50px', objectFit: 'contain', mixBlendMode: 'lighten' }}
+            style={{ height: '50px', objectFit: 'contain' }}
           />
           <h2 style={{ letterSpacing: '2px', margin: 0, display: 'none', alignItems: 'center' }}>
             <span style={{ color: '#06b6d4' }}>VS</span>
