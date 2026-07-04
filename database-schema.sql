@@ -1,7 +1,17 @@
 -- VSNEXAR Supabase Schema (Debugged Version)
 -- Run this in your Supabase SQL Editor
 
--- 1. Create Services Table (with existence check)
+-- 1. Create Users Table
+CREATE TABLE IF NOT EXISTS public.users (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  email text UNIQUE NOT NULL,
+  password text, -- Added for manual management (Security Note: should be hashed)
+  full_name text NOT NULL,
+  role text DEFAULT 'user',
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 2. Create Services Table (with existence check)
 CREATE TABLE IF NOT EXISTS public.services (
   id text PRIMARY KEY,
   title text NOT NULL,
@@ -43,6 +53,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 4. Turn on Row Level Security (RLS)
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 -- 5. Policies (with drop/create logic to avoid "exists" errors)
 DROP POLICY IF EXISTS "Allow public read access on services" ON public.services;
@@ -50,3 +61,9 @@ CREATE POLICY "Allow public read access on services" ON public.services FOR SELE
 
 DROP POLICY IF EXISTS "Allow public read access on workers" ON public.workers;
 CREATE POLICY "Allow public read access on workers" ON public.workers FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public read access on users" ON public.users;
+CREATE POLICY "Allow public read access on users" ON public.users FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow public insert on users" ON public.users;
+CREATE POLICY "Allow public insert on users" ON public.users FOR INSERT WITH CHECK (true);

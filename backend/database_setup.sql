@@ -10,6 +10,7 @@
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
+    password TEXT,              -- Added for manual management (Security Note: should be hashed)
     full_name TEXT NOT NULL,
     role TEXT DEFAULT 'user',  -- 'user' or 'admin'
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
